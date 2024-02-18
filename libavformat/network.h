@@ -271,7 +271,8 @@ int ff_listen_bind(int fd, const struct sockaddr *addr,
  * @param addrlen Third argument of bind().
  * @return        0 on success or an AVERROR on failure.
  */
-int ff_listen(int fd, const struct sockaddr *addr, socklen_t addrlen);
+int ff_listen(int fd, const struct sockaddr *addr, socklen_t addrlen,
+              void *logctx);
 
 /**
  * Poll for a single connection on the passed file descriptor.
@@ -303,14 +304,9 @@ int ff_listen_connect(int fd, const struct sockaddr *addr,
                       socklen_t addrlen, int timeout,
                       URLContext *h, int will_try_next);
 
-int ff_sendto(int fd, const char *msg, int msg_len, int flag,
-                      const struct sockaddr *addr,
-                      socklen_t addrlen, int timeout, URLContext *h,
-                      int will_try_next);
-
 int ff_http_match_no_proxy(const char *no_proxy, const char *hostname);
 
-int ff_socket(int domain, int type, int protocol);
+int ff_socket(int domain, int type, int protocol, void *logctx);
 
 void ff_log_net_error(void *ctx, int level, const char* prefix);
 
