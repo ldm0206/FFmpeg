@@ -39,3 +39,4 @@
 /mapfile
 /tools/python/__pycache__/
 .vscode
+.idea
