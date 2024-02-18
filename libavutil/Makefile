@@ -91,6 +91,7 @@ HEADERS = application.h                                                 \
           tea.h                                                         \
           tx.h                                                          \
           film_grain_params.h                                           \
+          thread.h                                                      \
 
 ARCH_HEADERS = bswap.h                                                  \
                intmath.h                                                \
