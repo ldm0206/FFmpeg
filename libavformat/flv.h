@@ -39,7 +39,22 @@
  * defined in reference link:
  * https://github.com/veovera/enhanced-rtmp/blob/main/enhanced-rtmp-v1.pdf
  * */
-#define FLV_IS_EX_HEADER          0x80
+#define FLV_IS_EX_HEADER 0x80
+
+#define FRAME_HEADER_EX              (8 << FLV_VIDEO_FRAMETYPE_OFFSET)
+
+enum video_frametype_t {
+	FT_KEY = 1 << FLV_VIDEO_FRAMETYPE_OFFSET,
+	FT_INTER = 2 << FLV_VIDEO_FRAMETYPE_OFFSET,
+};
+
+enum packet_type_t {
+	PACKETTYPE_SEQ_START = 0,
+	PACKETTYPE_FRAMES = 1,
+	PACKETTYPE_SEQ_END = 2,
+	PACKETTYPE_FRAMESX = 3,
+	PACKETTYPE_METADATA = 4
+};
 
 /* bitmasks to isolate specific values */
 #define FLV_AUDIO_CHANNEL_MASK    0x01
@@ -48,13 +63,23 @@
 #define FLV_AUDIO_CODECID_MASK    0xf0
 
 #define FLV_VIDEO_CODECID_MASK    0x0f
-#define FLV_VIDEO_FRAMETYPE_MASK  0x70
+#define FLV_VIDEO_FRAMETYPE_MASK  0xf0
 
 #define AMF_END_OF_OBJECT         0x09
 
 #define KEYFRAMES_TAG            "keyframes"
 #define KEYFRAMES_TIMESTAMP_TAG  "times"
 #define KEYFRAMES_BYTEOFFSET_TAG "filepositions"
+
+#define IS_EXT_HEADER(x) (((x) & FRAME_HEADER_EX) == FRAME_HEADER_EX)
+#define GET_PACKET_TYPE(x) ((x) & FLV_VIDEO_CODECID_MASK)
+#define EXT_HEADER_IS_SEQFRAME(x) (((x) & FLV_VIDEO_CODECID_MASK) == PACKETTYPE_SEQ_START)
+#define EXT_HEADER_IS_FRAMES(x) (((x) & FLV_VIDEO_CODECID_MASK) == PACKETTYPE_FRAMES)
+#define EXT_HEADER_IS_FRAMESX(x) (((x) & FLV_VIDEO_CODECID_MASK) == PACKETTYPE_FRAMESX)
+#define EXT_HEADER_IS_ENDFRAME(x) (((x) & FLV_VIDEO_CODECID_MASK) == PACKETTYPE_SEQ_END)
+
+#define EXT_HEADER_IS_KEYFRAME(x) (((x) & FLV_VIDEO_FRAMETYPE_MASK) == FT_KEY)
+#define EXT_HEADER_IS_INTERFRAME(x) (((x) & FLV_VIDEO_FRAMETYPE_MASK) == FT_INTER)
 
 
 enum {
@@ -103,6 +128,7 @@ enum {
     FLV_CODECID_NELLYMOSER           = 6 << FLV_AUDIO_CODECID_OFFSET,
     FLV_CODECID_PCM_ALAW             = 7 << FLV_AUDIO_CODECID_OFFSET,
     FLV_CODECID_PCM_MULAW            = 8 << FLV_AUDIO_CODECID_OFFSET,
+    FLV_CODECID_OPUS                 = 9 << FLV_AUDIO_CODECID_OFFSET,
     FLV_CODECID_AAC                  = 10<< FLV_AUDIO_CODECID_OFFSET,
     FLV_CODECID_SPEEX                = 11<< FLV_AUDIO_CODECID_OFFSET,
 };
@@ -116,15 +142,10 @@ enum {
     FLV_CODECID_H264    = 7,
     FLV_CODECID_REALH263= 8,
     FLV_CODECID_MPEG4   = 9,
-};
-
-enum {
-    PacketTypeSequenceStart         = 0,
-    PacketTypeCodedFrames           = 1,
-    PacketTypeSequenceEnd           = 2,
-    PacketTypeCodedFramesX          = 3,
-    PacketTypeMetadata              = 4,
-    PacketTypeMPEG2TSSequenceStart  = 5,
+    FLV_CODECID_HEVC    = 12,
+    FLV_CODECID_AV1     = 13,
+    FLV_CODECID_VP8     = 14,
+    FLV_CODECID_VP9     = 15,
 };
 
 enum {
